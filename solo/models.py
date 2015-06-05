@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.core.cache import get_cache
+from django.core.cache import caches
 from django.db import models
 
 from solo import settings as solo_settings
@@ -22,7 +22,7 @@ class SingletonModel(models.Model):
         cache_name = getattr(settings, 'SOLO_CACHE', solo_settings.SOLO_CACHE)
         if not cache_name:
             return None
-        cache = get_cache(cache_name)
+        cache = caches[cache_name]
         cache_key = self.get_cache_key()
         timeout = getattr(settings, 'SOLO_CACHE_TIMEOUT', solo_settings.SOLO_CACHE_TIMEOUT)
         cache.set(cache_key, self, timeout)
@@ -38,7 +38,7 @@ class SingletonModel(models.Model):
         if not cache_name:
             obj, created = cls.objects.get_or_create(pk=1)
             return obj
-        cache = get_cache(cache_name)
+        cache = caches[cache_name]
         cache_key = cls.get_cache_key()
         obj = cache.get(cache_key)
         if not obj:

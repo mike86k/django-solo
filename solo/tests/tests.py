@@ -1,4 +1,4 @@
-from django.core.cache import get_cache
+from django.core.cache import caches
 from django.template import Template, Context
 from django.test import TestCase
 
@@ -14,7 +14,7 @@ class SigletonTest(TestCase):
             '{% get_solo "tests.SiteConfiguration" as site_config  %}'
             '{{ site_config.site_name }}'
         )
-        self.cache = get_cache('default')
+        self.cache = caches['default']
         self.cache_key = SiteConfiguration.get_cache_key()
         self.cache.clear()
         SiteConfiguration.objects.all().delete()
